@@ -1,0 +1,78 @@
+image:
+  name: hashicorp/terraform:1.4.6
+  entrypoint: [""]
+
+variables:
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+
+stages:
+  - fmt
+  - validate
+  - tflint
+  - tfsec
+  - plan
+  - apply
+
+cache:
+  paths:
+    - ${TF_ROOT}/.terraform
+
+fmt:
+  stage: fmt
+  script:
+    - terraform fmt -check -recursive
+
+validate:
+  stage: validate
+  script:
+    - cd ${TF_ROOT}
+    - terraform validate
+  dependencies:
+    - fmt
+
+tflint:
+  stage: tflint
+  image:
+    name: wata727/tflint:0.29.1
+    entrypoint:
+      - "/usr/bin/env"
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  script:
+    - tflint
+  dependencies:
+    - validate
+
+tfsec:
+  stage: tfsec
+  image:
+    name: aquasec/tfsec:v1.28
+    entrypoint: [""]
+  script:
+    - tfsec .
+  dependencies:
+    - tflint
+
+plan:
+  stage: plan
+  script:
+    - terraform init -input=false
+    - terraform plan -input=false -out=terraform.tfplan
+  artifacts:
+    name: plan_output
+    paths:
+      - ./terraform.tfplan
+  dependencies:
+    - tfsec
+
+apply:
+  stage: apply
+  script:
+    - terraform init -input=false
+    - terraform apply -input=false terraform.tfplan
+  when: manual
+  only:
+    - main
+  dependencies:
+    - plan

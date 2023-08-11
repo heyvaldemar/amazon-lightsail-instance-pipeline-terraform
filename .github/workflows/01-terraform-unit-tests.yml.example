@@ -1,0 +1,97 @@
+name: 'Terraform Unit Tests'
+
+on:
+  push:
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+jobs:
+  terraform-validation:
+    name: 'Terraform Validation'
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: GitHub Actions Repository Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init -backend=false
+
+    # Validate terraform files
+    - name: Terraform Validate
+      run: terraform validate
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check -recursive
+
+  # Define a job called 'tfsec'
+  tfsec:
+    # Give this job a descriptive name
+    name: 'tfsec'
+    # This job depends on the 'terraform-validation' job
+    needs: [terraform-validation]
+    # This job will run on an ubuntu-latest runner
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository content to the runner
+      - name: tfsec Repository Checkout
+        uses: actions/checkout@master
+
+      # Run tfsec to check for potential security issues
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+  # Define a job called 'tflint'
+  tflint:
+    name: 'tflint'
+    needs: [tfsec]
+    runs-on: ${{ matrix.os }}
+
+    # Define the matrix of OSs to test on
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      # Checkout the repository content to the runner
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+      # Caches a directory
+    - name: Cache plugin dir
+      uses: actions/cache@v3
+      with:
+        # Path to the directory to cache
+        path: ~/.tflint.d/plugins
+        # Key to use for caching
+        key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+
+      # Sets up TFLint
+    - name: Setup TFLint
+      uses: terraform-linters/setup-tflint@v3
+      with:
+        # Version of TFLint to set up
+        tflint_version: v0.38.1
+
+      # Display the version of TFLint
+    - name: Show version
+      run: tflint --version
+
+      # Initialize TFLint
+    - name: Init TFLint
+      run: tflint --init
+
+      # Run TFLint in compact mode
+    - name: Run TFLint
+      run: tflint -f compact
