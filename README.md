@@ -104,7 +104,7 @@ Note, that you will need to add variables such as AWS_ACCESS_KEY_ID, AWS_DEFAULT
 
 Therefore, you will need to create a service user in advance, using AWS Identity and Access Management (IAM) to get values for these variables and assign an access policy to the user to be able to operate with your resources.
 
-You can delete `.github` if you are not planning to use the GitLab pipeline.
+You can delete `.github` if you are not planning to use the GitHub pipeline.
 
 1. **Terraform Unit Tests**
 
