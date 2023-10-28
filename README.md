@@ -78,7 +78,7 @@ Once you've run `terraform apply` and the resources are successfully created, a 
 
 Here's an example of how to use the key to connect via SSH (replace myuser with your username and myinstance with your instance's public IP address or hostname):
 
-`ssh -i key-pair-wordrepss-1.pem bitnami@instance-static-ip`
+`ssh -i key-pair-wordpress-1.pem bitnami@instance-static-ip`
 
 # Backend for Terraform State
 
