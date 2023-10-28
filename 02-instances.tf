@@ -19,7 +19,7 @@ resource "aws_lightsail_instance" "instance_1" {
 }
 
 # Public ports definition on the AWS Lightsail instance
-resource "aws_lightsail_instance_public_ports" "public_port_80" {
+resource "aws_lightsail_instance_public_ports" "public_ports" {
   instance_name = aws_lightsail_instance.instance_1.name
 
   port_info {
