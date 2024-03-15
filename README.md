@@ -226,7 +226,7 @@ I’m Vladimir Mikhalev, the [Docker Captain](https://www.docker.com/captains/vl
 🎬 Follow me on [YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1)\
 🐦 Follow me on [Twitter](https://twitter.com/heyValdemar)\
 🎨 Follow me on [Instagram](https://www.instagram.com/heyvaldemar/)\
-🐘 Follow me on [Mastodon](https://hachyderm.io/@heyValdemar)\
+🐘 Follow me on [Mastodon](https://mastodon.social/@heyvaldemar)\
 🧊 Follow me on [Bluesky](https://bsky.app/profile/heyvaldemar.bsky.social)\
 🎸 Follow me on [Facebook](https://www.facebook.com/heyValdemarFB/)\
 🎥 Follow me on [TikTok](https://www.tiktok.com/@heyvaldemar)\
