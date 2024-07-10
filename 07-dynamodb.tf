@@ -19,7 +19,7 @@ resource "aws_dynamodb_table" "dynamodb_terraform_state_lock_1" {
   }
 
   tags = {
-    "Name" = "dynamodb-terraform-state-lock-wordpress-1"
+    Name = "dynamodb-terraform-state-lock-wordpress-1"
   }
 
   depends_on = [aws_kms_key.kms_key_2]
