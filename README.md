@@ -16,7 +16,7 @@ The Terraform script performs the following operations to set up an Amazon Light
 
 5. **Static IP address attachment to a Lightsail instance**: The fifth resource block attaches the static IP address created in step 4 to the Lightsail instance created in step 1.
 
-# Requirements
+## Requirements
 
 Install AWS CLI by following the [guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
 
@@ -32,7 +32,7 @@ Install tfsec by following the [guide](https://github.com/aquasecurity/tfsec)
 
 Install tfupdate by following the [guide](https://github.com/minamijoyo/tfupdate)
 
-# Blueprint
+## Blueprint
 
 When creating an instance in AWS Lightsail, two crucial parameters need to be specified: `blueprint_id` and `bundle_id` in the `00-variables.tf`.
 
@@ -46,11 +46,11 @@ On the other hand, the `bundle_id` parameter specifies the plan for your Lightsa
 
 In essence, the `blueprint_id` and `bundle_id` parameters together define the software and hardware configuration of your Lightsail instance.
 
-# Pre-commit Hooks
+## Pre-commit Hooks
 
 `.pre-commit-config.yaml` is useful for identifying simple issues before submission to code review. Pointing these issues out before code review, allows a code reviewer to focus on the architecture of a change while not wasting time with trivial style nitpicks. Make sure you have all tools from the requirements section installed for pre-commit hooks to work.
 
-# Manual Installation
+## Manual Installation
 
 Make sure you have all tools from the requirements section installed.
 
@@ -72,7 +72,7 @@ Deploy using the command:
 
 `terraform apply -auto-approve`
 
-# SSH
+## SSH
 
 Once you've run `terraform apply` and the resources are successfully created, a private key file will be generated in your project root directory (where your Terraform files are located). This key can be used to securely connect to the created Amazon Lightsail instance via SSH.
 
@@ -80,7 +80,7 @@ Here's an example of how to use the key to connect via SSH (replace myuser with 
 
 `ssh -i key-pair-wordpress-1.pem bitnami@instance-static-ip`
 
-# Backend for Terraform State
+## Backend for Terraform State
 
 The `backend` block in the `01-providers.tf` must remain commented until the bucket and the DynamoDB table are created.
 
@@ -94,7 +94,7 @@ After your values are set, you can then uncomment the `backend` block and run ag
 
 In this way, the `terraform.tfstate` file will be stored in an S3 bucket and DynamoDB will be used for state locking and consistency checking.
 
-# GitHub Actions
+## GitHub Actions
 
 `.github` is useful if you are planning to run a pipeline on GitHub and implement the GitOps approach.
 
@@ -150,7 +150,7 @@ Once the production environment is created, set up a protection rule and include
 
 If you have a free version of GitHub no action is needed, but approval process will not be enabled.
 
-# GitLab CI/CD
+## GitLab CI/CD
 
 `.gitlab-ci.yml` is useful if you are planning to run a pipeline on GitLab and implement the GitOps approach.
 
@@ -176,7 +176,7 @@ tflint: This step employs tflint, a Terraform linting tool, to perform additiona
 
 To ensure accuracy and control over the changes made to your infrastructure, it is essential to manually initiate the job for applying the configuration. Before proceeding with the application, it is crucial to carefully review the generated plan. This step allows you to verify that the proposed changes align with your intended modifications to the infrastructure. By manually reviewing and approving the plan, you can confidently ensure that only the intended modifications will be implemented, mitigating any potential risks or unintended consequences.
 
-# Committing Changes and Triggering Pipeline
+## Committing Changes and Triggering Pipeline
 
 Follow these steps to commit changes and trigger the pipeline:
 
@@ -218,30 +218,82 @@ Replace `<branch-name>` with the name of the branch you are working on (e.g., `n
 
 11.  **Merge Request**: If the pipeline is successful and the changes are on a feature branch, create a Merge Request to merge the changes into the main branch. If the pipeline fails, investigate the issue, fix it, and push the changes again to re-trigger the pipeline. Once the merge request is created, your team can review the changes, provide feedback, and approve or request changes. After the merge request has been reviewed and approved, it can be merged into the main branch to apply the changes to the production infrastructure.
 
-# Author
+## Author
 
-I’m Vladimir Mikhalev, the [Docker Captain](https://www.docker.com/captains/vladimir-mikhalev/), but my friends can call me Valdemar.
+hey everyone,
 
-🌐 My [website](https://www.heyvaldemar.com/) with detailed IT guides\
-🎬 Follow me on [YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1)\
-🐦 Follow me on [Twitter](https://twitter.com/heyValdemar)\
-🎨 Follow me on [Instagram](https://www.instagram.com/heyvaldemar/)\
-🐘 Follow me on [Mastodon](https://mastodon.social/@heyvaldemar)\
-🧊 Follow me on [Bluesky](https://bsky.app/profile/heyvaldemar.bsky.social)\
-🎸 Follow me on [Facebook](https://www.facebook.com/heyValdemarFB/)\
-🎥 Follow me on [TikTok](https://www.tiktok.com/@heyvaldemar)\
-💻 Follow me on [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)\
-🐈 Follow me on [GitHub](https://github.com/heyvaldemar)
+💾 I’ve been in the IT game for over 20 years, cutting my teeth with some big names like [IBM](https://www.linkedin.com/in/heyvaldemar/), [Thales](https://www.linkedin.com/in/heyvaldemar/), and [Amazon](https://www.linkedin.com/in/heyvaldemar/). These days, I wear the hat of a DevOps Consultant and Team Lead, but what really gets me going is Docker and container technology - I’m kind of obsessed!
 
-# Communication
+💛 I have my own IT [blog](https://www.heyvaldemar.com/), where I’ve built a [community](https://discord.gg/AJQGCCBcqf) of DevOps enthusiasts who share my love for all things Docker, containers, and IT technologies in general. And to make sure everyone can jump on this awesome DevOps train, I write super detailed guides (seriously, they’re foolproof!) that help even newbies deploy and manage complex IT solutions.
 
-👾 Chat with IT pros on [Discord](https://discord.gg/AJQGCCBcqf)\
-📧 Reach me at ask@sre.gg
+🚀 My dream is to empower every single person in the DevOps community to squeeze every last drop of potential out of Docker and container tech.
 
-# Give Thanks
+🐳 As a [Docker Captain](https://www.docker.com/captains/vladimir-mikhalev/), I’m stoked to share my knowledge, experiences, and a good dose of passion for the tech. My aim is to encourage learning, innovation, and growth, and to inspire the next generation of IT whizz-kids to push Docker and container tech to its limits.
 
-💎 Support on [GitHub](https://github.com/sponsors/heyValdemar)\
-🏆 Support on [Patreon](https://www.patreon.com/heyValdemar)\
-🥤 Support on [BuyMeaCoffee](https://www.buymeacoffee.com/heyValdemar)\
-🍪 Support on [Ko-fi](https://ko-fi.com/heyValdemar)\
-💖 Support on [PayPal](https://www.paypal.com/paypalme/heyValdemarCOM)
+Let’s do this together!
+
+## My 2D Portfolio
+
+🕹️ Click into [sre.gg](https://www.sre.gg/) — my virtual space is a 2D pixel-art portfolio inviting you to interact with elements that encapsulate the milestones of my DevOps career.
+
+## My Courses
+
+🎓 Dive into my [comprehensive IT courses](https://www.heyvaldemar.com/courses/) designed for enthusiasts and professionals alike. Whether you're looking to master Docker, conquer Kubernetes, or advance your DevOps skills, my courses provide a structured pathway to enhancing your technical prowess.
+
+🔑 [Each course](https://www.udemy.com/user/heyvaldemar/) is built from the ground up with real-world scenarios in mind, ensuring that you gain practical knowledge and hands-on experience. From beginners to seasoned professionals, there's something here for everyone to elevate their IT skills.
+
+## My Services
+
+💼 Take a look at my [service catalog](https://www.heyvaldemar.com/services/) and find out how we can make your technological life better. Whether it's increasing the efficiency of your IT infrastructure, advancing your career, or expanding your technological horizons — I'm here to help you achieve your goals. From DevOps transformations to building gaming computers — let's make your technology unparalleled!
+
+## Patreon Exclusives
+
+🏆 Join my [Patreon](https://www.patreon.com/heyvaldemar) and dive deep into the world of Docker and DevOps with exclusive content tailored for IT enthusiasts and professionals. As your experienced guide, I offer a range of membership tiers designed to suit everyone from newbies to IT experts.
+
+## My Recommendations
+
+📕 Check out my collection of [essential DevOps books](https://kit.co/heyvaldemar/essential-devops-books)\
+🖥️ Check out my [studio streaming and recording kit](https://kit.co/heyvaldemar/my-studio-streaming-and-recording-kit)\
+📡 Check out my [streaming starter kit](https://kit.co/heyvaldemar/streaming-starter-kit)
+
+## Follow Me
+
+🎬 [YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1)\
+🐦 [X / Twitter](https://twitter.com/heyvaldemar)\
+🎨 [Instagram](https://www.instagram.com/heyvaldemar/)\
+🐘 [Mastodon](https://mastodon.social/@heyvaldemar)\
+🧵 [Threads](https://www.threads.net/@heyvaldemar)\
+🎸 [Facebook](https://www.facebook.com/heyvaldemarFB/)\
+🧊 [Bluesky](https://bsky.app/profile/heyvaldemar.bsky.social)\
+🎥 [TikTok](https://www.tiktok.com/@heyvaldemar)\
+💻 [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)\
+📣 [daily.dev Squad](https://app.daily.dev/squads/devopscompass)\
+🧩 [LeetCode](https://leetcode.com/u/heyvaldemar/)\
+🐈 [GitHub](https://github.com/heyvaldemar)
+
+## Community of IT Experts
+
+👾 [Discord](https://discord.gg/AJQGCCBcqf)
+
+## Refill My Coffee Supplies
+
+💖 [PayPal](https://www.paypal.com/paypalme/heyvaldemarCOM)\
+🏆 [Patreon](https://www.patreon.com/heyvaldemar)\
+💎 [GitHub](https://github.com/sponsors/heyvaldemar)\
+🥤 [BuyMeaCoffee](https://www.buymeacoffee.com/heyvaldemar)\
+🍪 [Ko-fi](https://ko-fi.com/heyvaldemar)
+
+🌟 **Bitcoin (BTC):** bc1q2fq0k2lvdythdrj4ep20metjwnjuf7wccpckxc\
+🔹 **Ethereum (ETH):** 0x76C936F9366Fad39769CA5285b0Af1d975adacB8\
+🪙 **Binance Coin (BNB):** bnb1xnn6gg63lr2dgufngfr0lkq39kz8qltjt2v2g6\
+💠 **Litecoin (LTC):** LMGrhx8Jsx73h1pWY9FE8GB46nBytjvz8g
+
+<div align="center">
+
+### Show some 💜 by starring some of the [repositories](https://github.com/heyValdemar?tab=repositories)!
+
+![octocat](https://user-images.githubusercontent.com/10498744/210113490-e2fad07f-4488-4da8-a656-b9abbdd8cb26.gif)
+
+</div>
+
+![footer](https://user-images.githubusercontent.com/10498744/210157572-1fca0242-8af2-46a6-bfa3-666ffd40ebde.svg)
