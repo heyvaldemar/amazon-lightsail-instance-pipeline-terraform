@@ -36,7 +36,7 @@ In this way, the "terraform.tfstate" file will be stored in an S3 bucket and Dyn
       source = "hashicorp/aws"
 
       # Provider versions
-      version = "~> 6.3.0"
+      version = "~> 6.4.0"
     }
 
     local = {
