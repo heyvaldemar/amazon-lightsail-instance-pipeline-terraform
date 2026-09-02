@@ -1,0 +1,61 @@
+name: Terraform Verification
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  # Weekly rerun catches ecosystem breakage (yanked providers, registry
+  # changes) even when the repository itself has not changed.
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Pinned by digest: the same binary verifies the configuration in CI
+  # and on a contributor's machine.
+  TERRAFORM_IMAGE: hashicorp/terraform:1.10@sha256:679ac5e095bf550bc726742cd12efa6050f0913080df479fdabfeb202953af28
+  TFLINT_IMAGE: ghcr.io/terraform-linters/tflint:v0.59.1@sha256:2c23953d05388157922a76be1a5a767ff719cba029e026914f92604e665b0d31
+
+jobs:
+  lint:
+    name: Lint workflow YAML
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: actionlint
+        run: |
+          docker run --rm -v "$PWD:/mnt" -w /mnt rhysd/actionlint:1.7.12 -color
+
+  terraform:
+    name: Format, validate, and lint the configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: terraform fmt -check
+        run: |
+          docker run --rm -v "$PWD:/mnt" -w /mnt "$TERRAFORM_IMAGE" fmt -check -diff -recursive
+
+      - name: terraform init (no backend, lockfile is authoritative)
+        # -lockfile=readonly fails the run if .terraform.lock.hcl no longer
+        # matches the version constraints - the lockfile must be updated in
+        # the same change that moves a provider.
+        run: |
+          docker run --rm -v "$PWD:/mnt" -w /mnt "$TERRAFORM_IMAGE" init -backend=false -input=false -lockfile=readonly
+
+      - name: terraform validate
+        run: |
+          docker run --rm -v "$PWD:/mnt" -w /mnt "$TERRAFORM_IMAGE" validate
+
+      - name: tflint
+        run: |
+          docker run --rm -v "$PWD:/mnt" -w /mnt "$TFLINT_IMAGE" --recursive
