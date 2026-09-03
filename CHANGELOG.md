@@ -25,7 +25,7 @@ First semver release. Brings this configuration to the fleet standard.
 - **`.terraform.lock.hcl`** locking every provider to exact builds and
   checksums for four platforms.
 - **Terraform Verification workflow**: `fmt -check`, `init
-  -lockfile=readonly`, `validate`, `tflint`, actionlint — on every push,
+  -lockfile=readonly`, `validate`, `tflint`, actionlint, on every push,
   pull request, and weekly.
 - MIT `LICENSE`, `SECURITY.md`, and a README that says what gets
   created, what must be changed before the first apply, and what CI

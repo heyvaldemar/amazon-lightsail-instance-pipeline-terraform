@@ -1,21 +1,21 @@
 # Security Policy
 
-## Supported Versions
+## Supported versions
 
 | Version                                        | Status             |
 |------------------------------------------------|--------------------|
 | Current `main`                                 | :white_check_mark: |
 | Older commits                                  | :x:                |
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
-Send reports to **v@valdemar.ai**. Encrypted email is preferred; the PGP public key is published at [heyvaldemar.com/security](https://heyvaldemar.com/security).
+Send reports to v@valdemar.ai. Encrypted email is preferred; the PGP public key is published at [heyvaldemar.com/security](https://heyvaldemar.com/security).
 
-You can expect an acknowledgment within **7 days**. This project does not operate a bounty program; researchers who submit valid, responsibly disclosed reports receive public credit in the changelog.
+You can expect an acknowledgment within 7 days. This project does not operate a bounty program; researchers who submit valid, responsibly disclosed reports receive public credit in the changelog.
 
 Please do not open public GitHub issues for security reports.
 
-## Supply Chain Trust
+## Supply chain trust
 
 This repository is a Terraform configuration, not a software distribution. Provider versions are constrained in `01-providers.tf` and locked to exact builds and checksums in `.terraform.lock.hcl` for four platforms; the Terraform Verification workflow runs `init` with the lockfile as the authority, so a provider cannot move without the lockfile changing in the same commit. GitHub Actions and the Terraform and tflint container images used in CI are pinned by digest.
 
