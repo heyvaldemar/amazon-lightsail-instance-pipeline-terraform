@@ -1,0 +1,64 @@
+name: Something does not work
+description: A plan that fails, an apply that leaves resources behind, an output that is not what the README says.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Terraform tells you almost everything in its own output. The most
+        useful thing you can attach is that output, unedited, with the account
+        identifiers taken out and nothing else.
+
+  - type: input
+    id: version
+    attributes:
+      label: Which version of this repository
+      description: The tag, or `git rev-parse --short HEAD`.
+      placeholder: "v1.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: terraform
+    attributes:
+      label: Terraform and provider versions
+      description: "`terraform version` prints both. The lockfile in this repository pins the provider, so a mismatch here is worth knowing about."
+      placeholder: "Terraform v1.9.8, hashicorp/aws v6.5.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: What you ran
+      description: The exact command, including any `-var` or `-var-file`.
+      placeholder: terraform apply -var-file=production.tfvars
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: The output, unedited
+      description: |
+        Remove account numbers, ARNs and any key material. Leave the error, the
+        resource addresses and the ordering — the cause is usually several
+        lines above the line that looks like the problem.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: state
+    attributes:
+      label: Did anything get created before it failed
+      description: "`terraform state list`, if there is state. An apply that half-succeeded needs a different answer from one that never started."
+      render: shell
+
+  - type: input
+    id: region
+    attributes:
+      label: Region and account type
+      description: Region, and whether this is a fresh account, an organisation member, or one with service control policies.
+      placeholder: "eu-central-1, organisation member with SCPs"
