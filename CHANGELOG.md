@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.1.1] - 2026-09-09
+
 ### Changed
 
 - **`hashicorp/aws` 6.62.0 → 6.63.0.** The constraint and the lockfile moved together, and the lockfile carries all four platforms it covered before. `terraform validate` ran against the new provider before this landed — that is what catches an argument it renamed or removed.
@@ -40,6 +44,7 @@ First semver release. Brings this configuration to the fleet standard.
   created, what must be changed before the first apply, and what CI
   does and does not prove.
 
-[Unreleased]: https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/releases/tag/v1.0.0
