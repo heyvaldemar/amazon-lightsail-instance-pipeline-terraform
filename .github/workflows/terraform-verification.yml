@@ -102,6 +102,9 @@ jobs:
           exit "$status"
 
       - name: Compare the pinned CI images against what their tags resolve to now
+        # Runs even when the comparison above failed, so one run reports every
+        # pin that fell behind instead of one per day.
+        if: always()
         # Both images are pinned by digest so the same binary runs here and on
         # a contributor's machine; a rebuilt tag is a binary nobody here has
         # run yet.
@@ -135,6 +138,9 @@ jobs:
           exit "$status"
 
       - name: Compare the pinned Terraform line against the latest release
+        # Runs even when the comparison above failed, so one run reports every
+        # pin that fell behind instead of one per day.
+        if: always()
         run: |
           status=0
           pin="$(grep -m1 -oE "^  TERRAFORM_IMAGE: .*" .github/workflows/terraform-verification.yml | sed -E "s/^  TERRAFORM_IMAGE: //")"
