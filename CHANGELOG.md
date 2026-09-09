@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Changed
+
+- **Terraform 1.10 → 1.16 in CI.** The same binary that formats, validates and lints this configuration; `terraform validate` ran against it before this landed.
 
 ## [1.1.1] - 2026-09-09
 
