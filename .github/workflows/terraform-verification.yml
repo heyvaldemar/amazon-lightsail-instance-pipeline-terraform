@@ -15,6 +15,9 @@ permissions:
   contents: read
 
 env:
+  # Authenticated requests avoid the anonymous API rate limit that shared
+  # GitHub runners regularly hit (api.github.com answers 403 otherwise).
+  GH_API_TOKEN: ${{ github.token }}
   # Pinned by digest: the same binary verifies the configuration in CI
   # and on a contributor's machine.
   TERRAFORM_IMAGE: hashicorp/terraform:1.10@sha256:679ac5e095bf550bc726742cd12efa6050f0913080df479fdabfeb202953af28
@@ -59,3 +62,96 @@ jobs:
       - name: tflint
         run: |
           docker run --rm -v "$PWD:/mnt" -w /mnt "$TFLINT_IMAGE" --recursive
+
+  check-pin-freshness:
+    name: Check pinned providers and images for upstream drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Scheduled and manual only: a new provider release is not actionable
+    # inside an unrelated pull request. On the cron the failure lands as a
+    # workflow-failure notification, and fleet triage reads these messages.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Compare every provider in the lockfile against the registry
+        # The lockfile is the pin: it names the exact version terraform will
+        # use, while the constraint in 01-providers.tf only bounds it. A
+        # provider that moved is a provider whose new arguments and removed
+        # ones have not been validated here yet.
+        run: |
+          status=0
+          while read -r source version; do
+            [ -n "$source" ] || continue
+            latest="$(curl -fsSL --retry 3 "https://registry.terraform.io/v1/providers/${source}" | jq -r '.version // empty')"
+            if [ -z "$latest" ]; then
+              echo "::error::the registry did not answer for ${source}; the pin itself is unchanged"
+              status=1
+            elif [ "$latest" != "$version" ]; then
+              echo "::error::${source} is behind: pinned ${version}, latest release is ${latest}"
+              status=1
+            else
+              echo "${source} ${version} is the latest release"
+            fi
+          done <<EOF
+          $(awk '/^provider "registry.terraform.io\// { split($2, p, "registry.terraform.io/"); src = p[2]; gsub(/"/, "", src) } /^  version/ { gsub(/"/, "", $3); if (src != "") { print src, $3; src = "" } }' .terraform.lock.hcl)
+          EOF
+          exit "$status"
+
+      - name: Compare the pinned CI images against what their tags resolve to now
+        # Both images are pinned by digest so the same binary runs here and on
+        # a contributor's machine; a rebuilt tag is a binary nobody here has
+        # run yet.
+        run: |
+          status=0
+          for var in TERRAFORM_IMAGE TFLINT_IMAGE; do
+            pin="$(grep -m1 -oE "^  ${var}: .*" .github/workflows/terraform-verification.yml | sed -E "s/^  ${var}: //")"
+            if [ -z "$pin" ]; then
+              echo "::error::${var} is not present in the workflow — this job is checking a pin that does not exist"
+              status=1
+              continue
+            fi
+            ref="${pin%%@*}"
+            pinned_digest="${pin##*@}"
+            current_digest=""
+            for attempt in 1 2 3; do
+              current_digest="$(docker buildx imagetools inspect "$ref" --format '{{json .Manifest}}' 2>/dev/null | jq -r '.digest // empty')"
+              [ -n "$current_digest" ] && break
+              sleep $(( attempt * 5 ))
+            done
+            if [ -z "$current_digest" ]; then
+              echo "::error::${ref} did not resolve after three attempts: the registry did not answer, or the tag is gone. The pin itself is unchanged."
+              status=1
+            elif [ "$pinned_digest" != "$current_digest" ]; then
+              echo "::error::${var} digest drift: pinned ${pinned_digest}, but ${ref} now resolves to ${current_digest}"
+              status=1
+            else
+              echo "${var} OK (${ref})"
+            fi
+          done
+          exit "$status"
+
+      - name: Compare the pinned Terraform line against the latest release
+        run: |
+          status=0
+          pin="$(grep -m1 -oE "^  TERRAFORM_IMAGE: .*" .github/workflows/terraform-verification.yml | sed -E "s/^  TERRAFORM_IMAGE: //")"
+          ref="${pin%%@*}"
+          pinned="${ref##*:}"
+          latest="$(curl -fsSL --retry 3 -H "Authorization: Bearer $GH_API_TOKEN" "https://api.github.com/repos/hashicorp/terraform/releases/latest" | jq -r .tag_name)"
+          latest="${latest#v}"
+          # The image is tagged by minor line (1.10), the release is a patch
+          # (1.16.1); compare the lines, which is what the pin actually says.
+          latest_line="${latest%.*}"
+          if [ -z "$latest" ] || [ "$latest" = "null" ]; then
+            echo "::error::Could not determine the latest Terraform release"
+            status=1
+          elif [ "$pinned" != "$latest_line" ]; then
+            echo "::error::TERRAFORM_IMAGE is behind: pinned ${pinned}, latest release is ${latest_line}"
+            status=1
+          else
+            echo "TERRAFORM_IMAGE ${pinned} is the current Terraform line"
+          fi
+          exit "$status"

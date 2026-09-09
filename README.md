@@ -47,6 +47,12 @@ No credentials are needed beyond your AWS CLI session; generated key material (S
 
 The first `apply` runs with local state and creates the S3 bucket, DynamoDB lock table and KMS key that will hold the state from then on. Once they exist, uncomment the `backend "s3"` block in `01-providers.tf`, fill in the bucket and table names from the outputs, and run `terraform init -migrate-state`. From that point every plan locks against DynamoDB and the state is versioned and encrypted.
 
+## Updating
+
+`./update.sh` moves this checkout to the latest release tag — a combination this repository's CI has formatted, initialised against its lockfile, validated and linted — then runs `terraform init -upgrade` and prints a plan. **It never applies.** Reading the plan and running `terraform apply` is yours. It refuses to cross a major version unattended, refuses to run over local changes, and names any variable that became required since your version before anything has moved. `./update.sh --dry-run` says what would happen; `--no-plan` updates the files and stops.
+
+Provider versions are watched daily: every provider in `.terraform.lock.hcl` is compared against the registry, and both pinned CI images against their tags. A provider that moved inside its major line is bumped through the same CI gate — `fmt`, `init` against the lockfile, `validate`, `tflint` — and released; a major is prepared on a branch for you to read.
+
 ## Supply chain trust
 
 - **Providers are locked to exact builds** in `.terraform.lock.hcl` for `linux_amd64`, `linux_arm64`, `darwin_amd64` and `darwin_arm64`, with checksums. CI runs `terraform init -lockfile=readonly`, so a provider cannot move without the lockfile changing in the same commit, and Dependabot proposes provider bumps as pull requests that CI validates.
