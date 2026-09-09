@@ -41,10 +41,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Read the pinned CI images
-        # They live in .ci-images.env so fleet triage can move them without a
+        # They live in ci-images.pins so fleet triage can move them without a
         # token that may rewrite this workflow. Only KEY=VALUE lines are passed
         # on; a comment reaching $GITHUB_ENV is a failed step.
-        run: grep -E '^[A-Z_]+=' .ci-images.env >> "$GITHUB_ENV"
+        run: grep -E '^[A-Z_]+=' ci-images.pins >> "$GITHUB_ENV"
 
       - name: terraform fmt -check
         run: |
@@ -80,10 +80,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Read the pinned CI images
-        # They live in .ci-images.env so fleet triage can move them without a
+        # They live in ci-images.pins so fleet triage can move them without a
         # token that may rewrite this workflow. Only KEY=VALUE lines are passed
         # on; a comment reaching $GITHUB_ENV is a failed step.
-        run: grep -E '^[A-Z_]+=' .ci-images.env >> "$GITHUB_ENV"
+        run: grep -E '^[A-Z_]+=' ci-images.pins >> "$GITHUB_ENV"
 
       - name: Compare every provider in the lockfile against the registry
         # The lockfile is the pin: it names the exact version terraform will
@@ -119,9 +119,9 @@ jobs:
         run: |
           status=0
           for var in TERRAFORM_IMAGE TFLINT_IMAGE; do
-            pin="$(grep -m1 -oE "^${var}=.*" .ci-images.env | sed -E "s/^${var}=//")"
+            pin="$(grep -m1 -oE "^${var}=.*" ci-images.pins | sed -E "s/^${var}=//")"
             if [ -z "$pin" ]; then
-              echo "::error::${var} is not present in .ci-images.env — this job is checking a pin that does not exist"
+              echo "::error::${var} is not present in ci-images.pins — this job is checking a pin that does not exist"
               status=1
               continue
             fi
@@ -151,7 +151,7 @@ jobs:
         if: always()
         run: |
           status=0
-          pin="$(grep -m1 -oE "^TERRAFORM_IMAGE=.*" .ci-images.env | sed -E "s/^TERRAFORM_IMAGE=//")"
+          pin="$(grep -m1 -oE "^TERRAFORM_IMAGE=.*" ci-images.pins | sed -E "s/^TERRAFORM_IMAGE=//")"
           ref="${pin%%@*}"
           pinned="${ref##*:}"
           latest="$(curl -fsSL --retry 3 -H "Authorization: Bearer $GH_API_TOKEN" "https://api.github.com/repos/hashicorp/terraform/releases/latest" | jq -r .tag_name)"
