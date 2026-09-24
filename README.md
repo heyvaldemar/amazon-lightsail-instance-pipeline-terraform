@@ -61,6 +61,23 @@ Provider versions are watched daily: every provider in `.terraform.lock.hcl` is 
 
 See [`SECURITY.md`](SECURITY.md) for the disclosure policy.
 
+### Verify what you deploy
+
+Every release from v1.1.4 on carries three files made on GitHub's runner with a short-lived identity and no stored key: `amazon-lightsail-instance-pipeline-terraform-<tag>.tar.gz`, a `git archive` of exactly the tree the tag points at; `amazon-lightsail-instance-pipeline-terraform-<tag>.tar.gz.sigstore.json`, a keyless [Sigstore](https://www.sigstore.dev/) signature over it; and `amazon-lightsail-instance-pipeline-terraform-<tag>.intoto.jsonl`, [SLSA](https://slsa.dev/) build provenance from the SLSA generator. To check them with nothing from this repository trusted:
+
+```bash
+cosign verify-blob amazon-lightsail-instance-pipeline-terraform-<tag>.tar.gz \
+  --bundle amazon-lightsail-instance-pipeline-terraform-<tag>.tar.gz.sigstore.json \
+  --certificate-identity-regexp '^https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+slsa-verifier verify-artifact amazon-lightsail-instance-pipeline-terraform-<tag>.tar.gz \
+  --provenance-path amazon-lightsail-instance-pipeline-terraform-<tag>.intoto.jsonl \
+  --source-uri github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform
+```
+
+Add `--source-tag <tag>` for a release published after 24 September 2026, which is signed by the run that published it. The five releases before that date were signed by a run started by hand on `main`, so their provenance names the branch, not the tag; the archive is still the tag's tree, and the signature still belongs to this repository's workflow. The workflow that makes them is [`release-assets.yml`](.github/workflows/release-assets.yml).
+
 ## Production checklist
 
 - [ ] **Move state to the remote backend** right after the bootstrap apply (see above). Local state on a laptop is how estates get lost.
