@@ -1,6 +1,7 @@
 # A Lightsail instance: Terraform
 
 [![Terraform Verification](https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/actions/workflows/terraform-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/amazon-lightsail-instance-pipeline-terraform/actions/workflows/terraform-verification.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14909/badge)](https://www.bestpractices.dev/projects/14909)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository deploys an Amazon Lightsail instance with a static IP, a generated key pair and opened ports, plus a self-provisioned Terraform state backend: the cheapest always-on Linux box AWS sells, managed as code. Flat, numbered `.tf` files, no modules to chase, every provider locked to an exact build.
