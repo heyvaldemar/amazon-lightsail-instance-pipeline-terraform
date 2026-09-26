@@ -1,7 +1,7 @@
 # What this configuration promises with its default variables, asserted on
 # a plan against mocked providers: no AWS account, no credentials, nothing
 # created. Generated from the configuration's own attributes and kept in
-# the repository; tests/plant-violations.sh breaks each promise on a copy
+# the repository; tests/plant_violations.py breaks each promise on a copy
 # and requires this file to notice.
 
 mock_provider "aws" {
