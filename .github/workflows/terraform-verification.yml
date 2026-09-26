@@ -65,6 +65,33 @@ jobs:
         run: |
           docker run --rm -v "$PWD:/mnt" -w /mnt "$TFLINT_IMAGE" --recursive
 
+  test:
+    name: Test what the configuration promises, and that the test can fail
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Read the pinned CI images
+        run: grep -E '^[A-Z_]+=' ci-images.pins >> "$GITHUB_ENV"
+
+      - name: terraform init (no backend, lockfile is authoritative)
+        run: |
+          docker run --rm -v "$PWD:/mnt" -w /mnt "$TERRAFORM_IMAGE" init -backend=false -input=false -lockfile=readonly
+
+      # A plan against mocked providers, asserting what the defaults deliver:
+      # encryption, rotation, no public buckets, no internet-facing database.
+      # No AWS account and no credentials are involved.
+      - name: terraform test
+        run: |
+          docker run --rm -v "$PWD:/mnt" -w /mnt "$TERRAFORM_IMAGE" test
+
+      # A test that cannot fail is not a test: each promise is broken on a
+      # copy of the configuration, and the run fails if the test stays green.
+      - name: The test, shown each violation it exists for
+        run: python3 tests/plant_violations.py
+
   check-pin-freshness:
     name: Check pinned providers and images for upstream drift
     runs-on: ubuntu-latest
