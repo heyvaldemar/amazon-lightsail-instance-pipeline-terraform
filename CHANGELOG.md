@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.2.0] - 2026-09-26
+
 ### Added
 
 - **A test of what the configuration promises, and proof that the test can fail.** `tests/posture.tftest.hcl` plans the configuration with its default variables against mocked providers and makes 10 assertions about what it would build; `tests/plant_violations.py` breaks them 8 ways on a copy and requires the test to notice each. Both run in CI on every push. The README's Testing section also lists, plainly, what the defaults do not promise.
