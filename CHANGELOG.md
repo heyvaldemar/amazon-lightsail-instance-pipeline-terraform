@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Fixed
+
+- **`update.sh` stops on a `.tfvars` it cannot read, before the checkout.** Every value in it used to read as missing; now it names the file, its owner and mode, and changes nothing.
 
 ## [1.2.2] - 2026-10-02
 

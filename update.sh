@@ -35,6 +35,16 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
   exit 1
 fi
 
+# A .tfvars this user cannot read would make every value in it look missing
+# below, and would stop terraform after the checkout, with the tree already
+# on the new tag. Name the file and stop first.
+for _v in ./*.tfvars; do
+  if [ -e "$_v" ] && [ ! -r "$_v" ]; then
+    echo "${_v#./} is not readable by $(id -un) ($(stat -c '%A %U:%G' "$_v" 2>/dev/null || stat -f '%Sp %Su:%Sg' "$_v")) — fix its ownership, nothing updated" >&2
+    exit 1
+  fi
+done
+
 git fetch --tags --quiet origin
 
 latest="$(git tag -l 'v*' --sort=-v:refname | head -1)"
