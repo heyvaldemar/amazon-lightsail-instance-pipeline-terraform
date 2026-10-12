@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`hashicorp/aws` 6.67.0 → 6.68.0.** The constraint and the lockfile moved together, and the lockfile carries all four platforms it covered before. `terraform validate` ran against the new provider before this landed — that is what catches an argument it renamed or removed.
+
 ### Fixed
 
 - **`update.sh` stops on a `.tfvars` it cannot read, before the checkout.** Every value in it used to read as missing; now it names the file, its owner and mode, and changes nothing.
