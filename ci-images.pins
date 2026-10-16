@@ -8,5 +8,5 @@
 #
 # Not named *.env on purpose: that pattern is ignored as a secrets file
 # in some of these repositories, and a pin list is not a secret.
-TERRAFORM_IMAGE=hashicorp/terraform:1.16@sha256:c7926feace05d0f7e73542842bf3945924e955a1f782cf000ccbb8d18fa42d77
+TERRAFORM_IMAGE=hashicorp/terraform:1.16@sha256:bfffc1ded5fbf0a17beaaf22eb4793980abdb19d0761ff6a3a0efb2ab4d9b316
 TFLINT_IMAGE=ghcr.io/terraform-linters/tflint:v0.59.1@sha256:2c23953d05388157922a76be1a5a767ff719cba029e026914f92604e665b0d31
