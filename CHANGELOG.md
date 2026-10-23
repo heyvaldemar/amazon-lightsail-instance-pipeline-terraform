@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Changed
+
+- **`hashicorp/aws` 6.69.1 → 6.70.0.** The constraint and the lockfile moved together, and the lockfile carries all four platforms it covered before. `terraform validate` ran against the new provider before this landed — that is what catches an argument it renamed or removed.
+- **Terraform 1.16 → 1.17 in CI.** The same binary that formats, validates and lints this configuration; `terraform validate` ran against it before this landed.
+
+### Security
+
+- **`hashicorp/terraform:1.16` was rebuilt upstream**; the pin moved from `sha256:bfffc1ded5fb…` to `sha256:c9c77f5b9820…`. Same version, same tag, a rebuilt binary — the one that formats, validates and lints this configuration.
 
 ## [1.2.4] - 2026-10-16
 
