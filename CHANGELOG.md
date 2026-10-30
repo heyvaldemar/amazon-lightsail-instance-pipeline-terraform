@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.2.6] - 2026-10-30
+
 ### Changed
 
 - **`hashicorp/aws` 6.70.0 → 6.71.0.** The constraint and the lockfile moved together, and the lockfile carries all four platforms it covered before. `terraform validate` ran against the new provider before this landed — that is what catches an argument it renamed or removed.
